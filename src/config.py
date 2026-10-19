@@ -7,6 +7,15 @@ Cloud Run environment variable configuration.
 
 import os
 
+# Aos Fatos (optional content source)
+AOSFATOS_API_URL: str = os.environ.get(
+    "AOSFATOS_API_URL", "https://api.aosfatos.org/api/blog"
+).rstrip("/")
+"""Base URL of the Aos Fatos blog API."""
+
+AOSFATOS_API_KEY: str = os.environ.get("AOSFATOS_API_KEY", "")
+"""Read-only API key required when querying Aos Fatos."""
+
 # ---------------------------------------------------------------------------
 # Firestore / Rate Limiting
 # ---------------------------------------------------------------------------
