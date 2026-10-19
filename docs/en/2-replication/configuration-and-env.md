@@ -57,6 +57,13 @@ otherwise let anyone flood Firestore through `POST /api/oauth/register`.
 *   `MCP_GITHUB_REPOS` (Required): Comma-separated list of target GitHub repositories to search (in `owner/repo` format).
 *   `MCP_GITHUB_API_BASE_URL` (Default: `"https://api.github.com"`): Base API endpoint for GitHub REST calls.
 
+#### Aos Fatos
+
+- `AOSFATOS_API_URL` (Default: `https://api.aosfatos.org/api/blog`): Blog API base URL.
+- `AOSFATOS_API_KEY` (Required when using this service): Read-only API key, sent in the `X-Api-Key` header without a prefix.
+
+See the [integration contract](../1-technical/integrations/aosfatos.md). These settings are shared by the `search_aosfatos` and `get_aosfatos_article` MCP tools.
+
 ### 2.4 Diagnostics & Telemetry
 *   `HTTP_TIMEOUT` (Default: `"10.0"`): Outbound HTTP request timeout in seconds.
 *   `LOG_LEVEL` (Default: `"INFO"`): Minimum level of the root logger.

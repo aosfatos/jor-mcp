@@ -57,6 +57,13 @@ de outra forma permitiria a qualquer pessoa inundar o Firestore via `POST /api/o
 *   `MCP_GITHUB_REPOS` (Obrigatório): Lista de repositórios do GitHub separados por vírgula (no formato `proprietario/repositorio`).
 *   `MCP_GITHUB_API_BASE_URL` (Padrão: `"https://api.github.com"`): Endpoint da API REST do GitHub.
 
+#### Aos Fatos
+
+- `AOSFATOS_API_URL` (Padrão: `https://api.aosfatos.org/api/blog`): URL base da API de blog.
+- `AOSFATOS_API_KEY` (Obrigatória ao usar o serviço): Chave somente de leitura, enviada no header `X-Api-Key`, sem prefixo.
+
+Veja o [contrato da integração](../1-tecnico/integracoes/aosfatos.md). Essas configurações são compartilhadas pelas ferramentas MCP `search_aosfatos` e `get_aosfatos_article`.
+
 ### 2.4 Diagnóstico e Telemetria
 *   `HTTP_TIMEOUT` (Padrão: `"10.0"`): Limite de tempo de solicitações HTTP de saída em segundos.
 *   `LOG_LEVEL` (Padrão: `"INFO"`): Nível mínimo do logger raiz.
