@@ -17,9 +17,9 @@ jobs:
 
     env:
       REGISTRY: us-central1-docker.pkg.dev
-      PROJECT_ID: jor-mcp
-      REPOSITORY: jor-mcp
-      IMAGE: jor-mcp-server
+      PROJECT_ID: aos-fatos
+      REPOSITORY: aos-fatos
+      IMAGE: aos-fator-jor-mcp
 
     steps:
       - name: Generate GitHub App Token

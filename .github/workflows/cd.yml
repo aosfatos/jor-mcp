@@ -1,5 +1,5 @@
 # =============================================================================
-# Jor-MCP — Continuous Deployment
+# Aos Fatos — Continuous Deployment
 # Manual deploy: pick an image tag and roll it out to Cloud Run.
 # =============================================================================
  
@@ -15,9 +15,9 @@ on:
  
 env:
   REGISTRY: us-central1-docker.pkg.dev
-  PROJECT_ID: jor-mcp
-  REPOSITORY: jor-mcp
-  IMAGE: jor-mcp-server
+  PROJECT_ID: aos-fatos
+  REPOSITORY: aos-fatos
+  IMAGE: aos-fator-jor-mcp
   REGION: us-central1
  
 # Queue overlapping deploys instead of cancelling an in-flight rollout.
@@ -73,6 +73,7 @@ jobs:
           GCP_PROJECT_ID: ${{ env.PROJECT_ID }}
           FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
           WORDPRESS_API_URL: ${{ vars.WORDPRESS_API_URL }}
+          AOSFATOS_API_URL: ${{ vars.AOSFATOS_API_URL || 'https://api.aosfatos.org/api/blog' }}
           MCP_GITHUB_REPOS: ${{ vars.MCP_GITHUB_REPOS }}
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           FIREBASE_WEB_API_KEY: ${{ vars.FIREBASE_WEB_API_KEY }}
@@ -87,7 +88,7 @@ jobs:
 
           # Allowlist form: only these variables are substituted, leaving any
           # other "$" in the manifest untouched.
-          envsubst '${IMAGE_URL} ${GCP_PROJECT_NUMBER} ${GCP_PROJECT_ID} ${FIREBASE_PROJECT_ID} ${WORDPRESS_API_URL} ${MCP_GITHUB_REPOS} ${OTEL_EXPORTER_OTLP_ENDPOINT} ${FIREBASE_WEB_API_KEY}' \
+          envsubst '${IMAGE_URL} ${GCP_PROJECT_NUMBER} ${GCP_PROJECT_ID} ${FIREBASE_PROJECT_ID} ${WORDPRESS_API_URL} ${AOSFATOS_API_URL} ${MCP_GITHUB_REPOS} ${OTEL_EXPORTER_OTLP_ENDPOINT} ${FIREBASE_WEB_API_KEY}' \
             < service.yaml > service.rendered.yaml
           echo "----- Rendered manifest -----"
           cat service.rendered.yaml
@@ -100,6 +101,6 @@ jobs:
 
       - name: Enforce no-auth (LB-only entry)
         run: |
-          gcloud run services add-iam-policy-binding jor-mcp-server \
+          gcloud run services add-iam-policy-binding aos-fatos-server \
             --member=allUsers --role=roles/run.invoker \
             --region "${{ env.REGION }}" --project "${{ env.PROJECT_ID }}"
