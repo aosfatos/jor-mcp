@@ -114,7 +114,11 @@ def _clean_article(article: AosFatosArticle) -> None:
     for tag in soup.select("script, style, noscript, aside[data-type='read-more']"):
         tag.decompose()
 
-    excluded_urls = {_source_url(ref.url, article.link) for ref in article.references if ref.exclude}
+    excluded_urls = {
+        _source_url(ref.url, article.link)
+        for ref in article.references
+        if ref.exclude
+    }
     references: list[AosFatosReference] = []
     seen: set[str] = set()
     for ref in article.references:
@@ -125,9 +129,8 @@ def _clean_article(article: AosFatosArticle) -> None:
     for anchor in soup.select("a[href]"):
         url = _source_url(str(anchor["href"]), article.link)
         if url is not None and url not in excluded_urls and url not in seen:
-            references.append(
-                AosFatosReference(name=anchor.get_text(" ", strip=True) or url, url=url)
-            )
+            name = anchor.get_text(" ", strip=True) or url
+            references.append(AosFatosReference(name=name, url=url))
             seen.add(url)
 
     for tag in soup.select("br"):

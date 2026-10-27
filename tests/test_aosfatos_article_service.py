@@ -82,7 +82,7 @@ async def test_fetch_entry_preserves_sources(
         {"name": "Excluída", "url": "https://excluded.org/", "exclude": True},
     ]
     article_body["content"] = (
-        '<script>script text</script><style>style text</style>'
+        "<script>script text</script><style>style text</style>"
         '<p>Veja <a href="https://source.org/">a fonte</a> e '
         '<a href="/noticias/outra/">outra matéria</a>.</p>'
         '<a href="https://excluded.org/">Excluída</a>'
@@ -169,10 +169,10 @@ async def test_fetch_entry_preserves_lists_and_captions(
     client: AsyncMock, article_body: dict[str, object]
 ) -> None:
     article_body["content"] = (
-        '<p>Primeira linha<br>Segunda linha &amp; dados.</p>'
-        '<ul><li>Item um</li><li>Item dois</li></ul>'
+        "<p>Primeira linha<br>Segunda linha &amp; dados.</p>"
+        "<ul><li>Item um</li><li>Item dois</li></ul>"
         '<figure><img src="image.jpg"><figcaption>Legenda</figcaption></figure>'
-        '<table><tr><td>Uma</td><td>célula</td></tr></table>'
+        "<table><tr><td>Uma</td><td>célula</td></tr></table>"
     )
     client.get.return_value = httpx.Response(
         200, json=article_body, request=httpx.Request("GET", "https://example.org/")
