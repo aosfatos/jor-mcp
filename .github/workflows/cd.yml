@@ -1,5 +1,5 @@
 # =============================================================================
-# Jor-MCP — Continuous Deployment
+# Aos Fatos — Continuous Deployment
 # Manual deploy: pick an image tag and roll it out to Cloud Run.
 # =============================================================================
  
@@ -14,11 +14,11 @@ on:
         type: string
  
 env:
-  REGISTRY: ${{ vars.GCP_REGION || 'us-central1' }}-docker.pkg.dev
-  PROJECT_ID: ${{ vars.GCP_PROJECT_ID || 'jor-mcp' }}
-  REPOSITORY: ${{ vars.GCP_AR_REPO || 'jor-mcp' }}
-  IMAGE: ${{ vars.GCP_IMAGE_NAME || 'jor-mcp-server' }}
-  REGION: ${{ vars.GCP_REGION || 'us-central1' }}
+  REGISTRY: us-central1-docker.pkg.dev
+  PROJECT_ID: aos-fatos
+  REPOSITORY: aos-fatos
+  IMAGE: aos-fator-jor-mcp
+  REGION: us-central1
  
 # Queue overlapping deploys instead of cancelling an in-flight rollout.
 concurrency:
@@ -74,6 +74,7 @@ jobs:
           GCP_REGION: ${{ env.REGION }}
           FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
           WORDPRESS_API_URL: ${{ vars.WORDPRESS_API_URL }}
+          AOSFATOS_API_URL: ${{ vars.AOSFATOS_API_URL || 'https://api.aosfatos.org/api/blog' }}
           MCP_GITHUB_REPOS: ${{ vars.MCP_GITHUB_REPOS }}
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           FIREBASE_WEB_API_KEY: ${{ vars.FIREBASE_WEB_API_KEY }}
@@ -102,6 +103,6 @@ jobs:
 
       - name: Enforce no-auth (LB-only entry)
         run: |
-          gcloud run services add-iam-policy-binding jor-mcp-server \
+          gcloud run services add-iam-policy-binding aos-fatos-server \
             --member=allUsers --role=roles/run.invoker \
             --region "${{ env.REGION }}" --project "${{ env.PROJECT_ID }}"
