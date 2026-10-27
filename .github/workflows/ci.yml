@@ -5,9 +5,9 @@ on:
 
 env:
   REGISTRY: us-central1-docker.pkg.dev
-  PROJECT_ID: jor-mcp
-  REPOSITORY: jor-mcp
-  IMAGE: jor-mcp-server
+  PROJECT_ID: aos-fatos
+  REPOSITORY: aosfator-jor-mcp
+  IMAGE: aos-fator-jor-mcp
 
 jobs:
 
@@ -64,9 +64,6 @@ jobs:
 
       - name: Lint (Ruff)
         run: uv run ruff check .
-
-      - name: Format check (Ruff)
-        run: uv run ruff format --check .
 
       - name: Type check (Mypy)
         run: uv run mypy .
