@@ -115,9 +115,7 @@ def _clean_article(article: AosFatosArticle) -> None:
         tag.decompose()
 
     excluded_urls = {
-        _source_url(ref.url, article.link)
-        for ref in article.references
-        if ref.exclude
+        _source_url(ref.url, article.link) for ref in article.references if ref.exclude
     }
     references: list[AosFatosReference] = []
     seen: set[str] = set()

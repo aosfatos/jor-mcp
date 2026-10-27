@@ -45,7 +45,6 @@ jobs:
 
   check:
     name: Code Quality & Security
-    if: ${{ false }}
     runs-on: ubuntu-latest
 
     steps:
