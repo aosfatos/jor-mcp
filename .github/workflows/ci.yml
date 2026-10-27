@@ -6,7 +6,7 @@ on:
 env:
   REGISTRY: us-central1-docker.pkg.dev
   PROJECT_ID: aos-fatos
-  REPOSITORY: aos-fatos
+  REPOSITORY: aosfator-jor-mcp
   IMAGE: aos-fator-jor-mcp
 
 jobs:
