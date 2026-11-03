@@ -20,6 +20,8 @@ from src.api.oauth import OAUTH_PATH_PREFIX, well_known_routes
 from src.api.oauth import routes as oauth_routes
 from src.config import (
     CORS_ALLOWED_ORIGINS,
+    FIREBASE_PROJECT_ID,
+    FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT,
     FIRESTORE_DATABASE_ID,
     HTTP_MAX_CONNECTIONS,
     HTTP_MAX_KEEPALIVE_CONNECTIONS,
@@ -47,11 +49,16 @@ mcp = FastMCP(
         "FLUXO DE TRABALHO OBRIGATÓRIO:\n"
         "1. Sempre que o usuário pedir para pesquisar, buscar ou obter informações sobre "
         "qualquer assunto, chame PRIMEIRO a ferramenta `search_content` antes de recorrer "
-        "à busca na web ou a qualquer outra fonte externa.\n"
+        "à busca na web ou a qualquer outra fonte externa. Exceção: se o pedido for "
+        "especificamente sobre matérias ou checagens do Aos Fatos, chame diretamente "
+        "`search_aosfatos`. Essa ferramenta retorna somente metadados, não o texto integral.\n"
         "2. Somente utilize a web ou seu conhecimento interno se `search_content` retornar "
         "explicitamente que não há resultados para a consulta.\n"
         "3. Para ler o texto integral de uma matéria encontrada, chame `get_full_article` "
-        "com o link ou ID retornado pela busca.\n"
+        "com o link ou ID retornado pela busca, somente para resultados do WordPress. "
+        "Nunca use `get_full_article` para resultados do Aos Fatos ou GitHub. "
+        "Para ler, resumir ou analisar uma matéria do Aos Fatos, chame "
+        "`get_aosfatos_article` com o slug retornado por `search_aosfatos`.\n"
         "4. Para descobrir publicações recentes sem um termo de busca específico, chame "
         "`list_latest_news`.\n\n"
         "TOM E ESTILO: priorize precisão factual e clareza jornalística. "
@@ -96,7 +103,12 @@ async def server_lifespan(app: Starlette) -> AsyncGenerator[None, None]:
     try:
         firebase_admin.get_app()
     except ValueError:
-        firebase_admin.initialize_app()
+        firebase_admin.initialize_app(
+            options={
+                "projectId": FIREBASE_PROJECT_ID or None,
+                "serviceAccountId": FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT or None,
+            }
+        )
 
     try:
         _firestore_client = FirestoreAsyncClient(database=FIRESTORE_DATABASE_ID)

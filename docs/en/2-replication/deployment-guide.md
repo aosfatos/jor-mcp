@@ -10,6 +10,48 @@ This document outlines the deployment architecture for the Jor-MCP server on Goo
 
 ---
 
+## Aos Fatos deployment
+
+This fork uses a public Cloud Run backend at
+`https://aos-fatos-server-607018375547.us-central1.run.app` and a separate
+Dokku app, `aos-fatos-mcp-oauth`, serving the static portal at
+`https://mcp-oauth.aosfatos.org`. The load balancer and GCS portal instructions
+below describe the upstream architecture, not this deployment.
+
+`service.yaml` sets the backend URL as `OAUTH_SERVER_BASE_URL` and the portal
+origin as both `OAUTH_PORTAL_BASE_URL` and `CORS_ALLOWED_ORIGINS`. Ingress is
+`all`, with public invocation enabled by the CD workflow; application-level
+OAuth still controls access. These URLs are explicit in the manifest, so the
+workflow no longer requires the `DOMAIN` repository variable.
+
+Cloud Run and Artifact Registry remain in `aos-fatos`. The runtime manifest sets
+`GOOGLE_CLOUD_PROJECT=jor-mcp-59831` so the SDKs use that project's Firebase and
+Firestore resources. Set the `FIREBASE_PROJECT_ID` repository variable to
+`jor-mcp-59831` as well. The Firestore database must be `(default)` unless
+`FIRESTORE_DATABASE_ID` is explicitly configured. Grant the runtime identity
+`jor-mcp-runner@aos-fatos.iam.gserviceaccount.com` the `roles/datastore.user` role
+in `jor-mcp-59831`; do not change the deployment workflow's project.
+
+Set `FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT` to
+`mcp-token-signer@jor-mcp-59831.iam.gserviceaccount.com`. The Admin SDK uses this
+account for remote signing and `FIREBASE_PROJECT_ID` for Auth operations; empty
+values preserve SDK discovery. Grant the runtime identity
+`roles/iam.serviceAccountTokenCreator` on this signer account only. The signer
+must belong to the Firebase project to avoid `CREDENTIAL_MISMATCH`.
+Enable `iamcredentials.googleapis.com` in both projects. No JSON key is needed.
+The runtime identity also needs `roles/firebaseauth.admin` in `jor-mcp-59831`;
+enable `identitytoolkit.googleapis.com` in `aos-fatos` for its Auth API calls.
+
+Redeploy the backend through the CD workflow to apply these settings. Authorize
+`mcp-oauth.aosfatos.org` in Firebase Authentication separately. The portal image
+must be built with `NEXT_PUBLIC_OAUTH_BACKEND_URL` set to the backend origin;
+runtime variables in Dokku do not change the exported JavaScript.
+
+For custom token exchange failures, find `Firebase custom token exchange rejected`
+in the backend logs. Fields `http_status` and `firebase_error_code` identify the
+rejection without logging tokens, API keys or the response body. Invalid error
+messages use `UNKNOWN`.
+
 ## 1. GCP Architecture Overview
 
 The system is designed to be fully serverless, highly available, and stateless at the application layer.

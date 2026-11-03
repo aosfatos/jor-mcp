@@ -7,6 +7,15 @@ Cloud Run environment variable configuration.
 
 import os
 
+# Aos Fatos (optional content source)
+AOSFATOS_API_URL: str = os.environ.get(
+    "AOSFATOS_API_URL", "https://api.aosfatos.org/api/blog"
+).rstrip("/")
+"""Base URL of the Aos Fatos blog API."""
+
+AOSFATOS_API_KEY: str = os.environ.get("AOSFATOS_API_KEY", "")
+"""Read-only API key required when querying Aos Fatos."""
+
 # ---------------------------------------------------------------------------
 # Firestore / Rate Limiting
 # ---------------------------------------------------------------------------
@@ -129,6 +138,18 @@ ALLOWED_USERS_COLLECTION: str = os.environ.get("ALLOWED_USERS_COLLECTION", "allo
 Each document id is a user email; the user is granted access only when the
 document exists and its ``status`` field equals ``"active"``. Managed manually
 by Ambiental Media (e.g. via the Firebase console)."""
+
+FIREBASE_PROJECT_ID: str = os.environ.get("FIREBASE_PROJECT_ID", "")
+"""Firebase project ID. Empty preserves the Admin SDK's project discovery."""
+
+FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT: str = os.environ.get(
+    "FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT", ""
+)
+"""Service account used for remote custom token signing.
+
+Empty preserves the Admin SDK's signer discovery. Set this to an account in the
+Firebase project when the runtime identity belongs to a different project.
+"""
 
 FIREBASE_WEB_API_KEY: str = os.environ.get("FIREBASE_WEB_API_KEY", "")
 """Firebase Web API key used by the token endpoint to exchange a custom token for
