@@ -46,6 +46,8 @@ spec:
               value: "jor-mcp-59831"
             - name: FIREBASE_PROJECT_ID
               value: "${FIREBASE_PROJECT_ID}"
+            - name: FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT
+              value: "mcp-token-signer@jor-mcp-59831.iam.gserviceaccount.com"
             - name: WORDPRESS_API_URL
               value: "${WORDPRESS_API_URL}"
             - name: AOSFATOS_API_URL

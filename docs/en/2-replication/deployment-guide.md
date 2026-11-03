@@ -32,6 +32,16 @@ Firestore resources. Set the `FIREBASE_PROJECT_ID` repository variable to
 `jor-mcp-runner@aos-fatos.iam.gserviceaccount.com` the `roles/datastore.user` role
 in `jor-mcp-59831`; do not change the deployment workflow's project.
 
+Set `FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT` to
+`mcp-token-signer@jor-mcp-59831.iam.gserviceaccount.com`. The Admin SDK uses this
+account for remote signing and `FIREBASE_PROJECT_ID` for Auth operations; empty
+values preserve SDK discovery. Grant the runtime identity
+`roles/iam.serviceAccountTokenCreator` on this signer account only. The signer
+must belong to the Firebase project to avoid `CREDENTIAL_MISMATCH`.
+Enable `iamcredentials.googleapis.com` in both projects. No JSON key is needed.
+The runtime identity also needs `roles/firebaseauth.admin` in `jor-mcp-59831`;
+enable `identitytoolkit.googleapis.com` in `aos-fatos` for its Auth API calls.
+
 Redeploy the backend through the CD workflow to apply these settings. Authorize
 `mcp-oauth.aosfatos.org` in Firebase Authentication separately. The portal image
 must be built with `NEXT_PUBLIC_OAUTH_BACKEND_URL` set to the backend origin;

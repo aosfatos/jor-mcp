@@ -139,6 +139,18 @@ Each document id is a user email; the user is granted access only when the
 document exists and its ``status`` field equals ``"active"``. Managed manually
 by Ambiental Media (e.g. via the Firebase console)."""
 
+FIREBASE_PROJECT_ID: str = os.environ.get("FIREBASE_PROJECT_ID", "")
+"""Firebase project ID. Empty preserves the Admin SDK's project discovery."""
+
+FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT: str = os.environ.get(
+    "FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT", ""
+)
+"""Service account used for remote custom token signing.
+
+Empty preserves the Admin SDK's signer discovery. Set this to an account in the
+Firebase project when the runtime identity belongs to a different project.
+"""
+
 FIREBASE_WEB_API_KEY: str = os.environ.get("FIREBASE_WEB_API_KEY", "")
 """Firebase Web API key used by the token endpoint to exchange a custom token for
 real ID/refresh tokens via the Google Identity Toolkit REST API. Same value as

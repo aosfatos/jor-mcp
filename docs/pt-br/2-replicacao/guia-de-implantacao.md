@@ -33,6 +33,16 @@ Firestore desse projeto. Defina também a variável de repositório
 papel `roles/datastore.user` em `jor-mcp-59831`; não altere o projeto de deploy
 no workflow.
 
+Defina `FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT` como
+`mcp-token-signer@jor-mcp-59831.iam.gserviceaccount.com`. O Admin SDK usa essa
+conta para assinatura remota e `FIREBASE_PROJECT_ID` nas operações Auth; valores
+vazios preservam a descoberta automática. Conceda à identidade de runtime
+`roles/iam.serviceAccountTokenCreator` apenas nessa conta assinante. O assinante
+deve pertencer ao projeto Firebase para evitar `CREDENTIAL_MISMATCH`.
+Habilite `iamcredentials.googleapis.com` nos dois projetos. Não é necessária
+chave JSON. A identidade de runtime também precisa de `roles/firebaseauth.admin`
+em `jor-mcp-59831`; habilite `identitytoolkit.googleapis.com` em `aos-fatos`.
+
 Execute o workflow CD do backend para aplicar essas configurações. Autorize
 `mcp-oauth.aosfatos.org` no Firebase Authentication separadamente. A imagem do
 portal precisa ser construída com `NEXT_PUBLIC_OAUTH_BACKEND_URL` apontando

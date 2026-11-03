@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from starlette.testclient import TestClient
 
 
@@ -32,6 +33,13 @@ def test_health_endpoint(_mock_setup: MagicMock) -> None:
 
 
 @patch("src.server.setup_telemetry")
+@pytest.mark.parametrize(
+    ("project_id", "signer"),
+    [
+        ("jor-mcp-59831", "mcp-token-signer@jor-mcp-59831.iam.gserviceaccount.com"),
+        ("", ""),
+    ],
+)
 @patch("firebase_admin.get_app", side_effect=ValueError("No app"))
 @patch("firebase_admin.initialize_app")
 @patch("src.server._mcp_http_app")
@@ -44,9 +52,15 @@ async def test_server_lifespan_initializes_firebase_when_not_present(
     mock_init: MagicMock,
     _mock_get_app: MagicMock,
     _mock_setup: MagicMock,
+    project_id: str,
+    signer: str,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """server_lifespan calls initialize_app() when no Firebase app exists yet."""
+    """Firebase uses the configured signer or falls back to SDK discovery."""
     from src.server import server_lifespan
+
+    monkeypatch.setattr("src.server.FIREBASE_PROJECT_ID", project_id)
+    monkeypatch.setattr("src.server.FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT", signer)
 
     @asynccontextmanager
     async def fake_mcp_lifespan(app):  # type: ignore[no-untyped-def]
@@ -61,7 +75,12 @@ async def test_server_lifespan_initializes_firebase_when_not_present(
     async with server_lifespan(MagicMock()):
         pass
 
-    mock_init.assert_called_once()
+    mock_init.assert_called_once_with(
+        options={
+            "projectId": project_id or None,
+            "serviceAccountId": signer or None,
+        }
+    )
     fake_http_client.aclose.assert_awaited_once()
     fake_firestore.close.assert_called_once()
     _mock_setup.assert_called_once()

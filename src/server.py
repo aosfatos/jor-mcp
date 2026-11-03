@@ -20,6 +20,8 @@ from src.api.oauth import OAUTH_PATH_PREFIX, well_known_routes
 from src.api.oauth import routes as oauth_routes
 from src.config import (
     CORS_ALLOWED_ORIGINS,
+    FIREBASE_PROJECT_ID,
+    FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT,
     FIRESTORE_DATABASE_ID,
     HTTP_MAX_CONNECTIONS,
     HTTP_MAX_KEEPALIVE_CONNECTIONS,
@@ -101,7 +103,12 @@ async def server_lifespan(app: Starlette) -> AsyncGenerator[None, None]:
     try:
         firebase_admin.get_app()
     except ValueError:
-        firebase_admin.initialize_app()
+        firebase_admin.initialize_app(
+            options={
+                "projectId": FIREBASE_PROJECT_ID or None,
+                "serviceAccountId": FIREBASE_TOKEN_SIGNER_SERVICE_ACCOUNT or None,
+            }
+        )
 
     try:
         _firestore_client = FirestoreAsyncClient(database=FIRESTORE_DATABASE_ID)
