@@ -13,6 +13,7 @@ import base64
 import hashlib
 import json
 import logging
+import re
 import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
@@ -483,6 +484,27 @@ async def _mint_firebase_tokens(uid: str) -> dict[str, Any]:
         params={"key": FIREBASE_WEB_API_KEY},
         json={"token": custom_token, "returnSecureToken": True},
     )
+    if response.is_error:
+        error_code = "UNKNOWN"
+        try:
+            payload = response.json()
+        except ValueError:
+            payload = None
+        if isinstance(payload, dict):
+            error = payload.get("error")
+            if isinstance(error, dict):
+                message = error.get("message")
+                if isinstance(message, str):
+                    code = message.partition(":")[0].strip()
+                    if re.fullmatch(r"[A-Z][A-Z0-9_]{0,79}", code):
+                        error_code = code
+        logger.error(
+            "Firebase custom token exchange rejected",
+            extra={
+                "http_status": response.status_code,
+                "firebase_error_code": error_code,
+            },
+        )
     response.raise_for_status()
     data = response.json()
     return {
@@ -584,6 +606,8 @@ async def _handle_authorization_code(token_request: TokenRequest) -> JSONRespons
 
     try:
         tokens = await _mint_firebase_tokens(record["uid"])
+    except httpx.HTTPStatusError:
+        return _error_response("server_error", "Token minting failed", 502)
     except (httpx.HTTPError, KeyError, ValueError):
         logger.exception("Failed to mint Firebase tokens")
         return _error_response("server_error", "Token minting failed", 502)

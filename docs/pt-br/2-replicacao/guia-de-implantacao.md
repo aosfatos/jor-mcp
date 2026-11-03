@@ -39,6 +39,11 @@ portal precisa ser construída com `NEXT_PUBLIC_OAUTH_BACKEND_URL` apontando
 para a origem do backend; variáveis de runtime no Dokku não alteram o
 JavaScript exportado.
 
+Para falhas na troca do custom token, procure `Firebase custom token exchange rejected`
+nos logs do backend. Os campos `http_status` e `firebase_error_code` identificam a
+rejeição sem registrar tokens, API keys ou o corpo da resposta. Mensagens de erro
+inválidas usam `UNKNOWN`.
+
 ## 1. Visão Geral da Arquitetura GCP
 
 O sistema foi projetado para ser totalmente serverless, altamente disponível e stateless na camada de aplicação.

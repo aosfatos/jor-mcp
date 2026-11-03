@@ -37,6 +37,11 @@ Redeploy the backend through the CD workflow to apply these settings. Authorize
 must be built with `NEXT_PUBLIC_OAUTH_BACKEND_URL` set to the backend origin;
 runtime variables in Dokku do not change the exported JavaScript.
 
+For custom token exchange failures, find `Firebase custom token exchange rejected`
+in the backend logs. Fields `http_status` and `firebase_error_code` identify the
+rejection without logging tokens, API keys or the response body. Invalid error
+messages use `UNKNOWN`.
+
 ## 1. GCP Architecture Overview
 
 The system is designed to be fully serverless, highly available, and stateless at the application layer.
