@@ -10,7 +10,7 @@ metadata:
   labels:
     cloud.googleapis.com/location: ${GCP_REGION}
   annotations:
-    run.googleapis.com/ingress: internal-and-cloud-load-balancing
+    run.googleapis.com/ingress: all
 
 spec:
   template:
@@ -55,11 +55,11 @@ spec:
             - name: FIREBASE_WEB_API_KEY
               value: "${FIREBASE_WEB_API_KEY}"
             - name: OAUTH_SERVER_BASE_URL
-              value: "https://${DOMAIN}"
+              value: "https://aos-fatos-server-607018375547.us-central1.run.app"
             - name: OAUTH_PORTAL_BASE_URL
-              value: "https://${DOMAIN}"
+              value: "https://mcp-oauth.aosfatos.org"
             - name: CORS_ALLOWED_ORIGINS
-              value: "https://${DOMAIN}"
+              value: "https://mcp-oauth.aosfatos.org"
             - name: OAUTH_ALLOWED_REDIRECT_HOSTS
               value: "claude.ai,chatgpt.com,www.braintrust.dev"
 

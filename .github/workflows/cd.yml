@@ -78,19 +78,18 @@ jobs:
           MCP_GITHUB_REPOS: ${{ vars.MCP_GITHUB_REPOS }}
           OTEL_EXPORTER_OTLP_ENDPOINT: ${{ vars.OTEL_EXPORTER_OTLP_ENDPOINT }}
           FIREBASE_WEB_API_KEY: ${{ vars.FIREBASE_WEB_API_KEY }}
-          DOMAIN: ${{ vars.DOMAIN }}
         run: |
           # Fail fast on the placeholders whose blank value would corrupt the
           # manifest itself: the image reference, the Secret Manager resource
           # paths, and the service account email. The other variables feed
           # plain env values and may legitimately be left unset.
-          for v in IMAGE_URL GCP_PROJECT_NUMBER GCP_PROJECT_ID GCP_REGION DOMAIN; do
+          for v in IMAGE_URL GCP_PROJECT_NUMBER GCP_PROJECT_ID GCP_REGION; do
             [ -n "${!v:-}" ] || { echo "::error::$v is empty"; exit 1; }
           done
 
           # Allowlist form: only these variables are substituted, leaving any
           # other "$" in the manifest untouched.
-          envsubst '${IMAGE_URL} ${GCP_PROJECT_NUMBER} ${GCP_PROJECT_ID} ${GCP_REGION} ${FIREBASE_PROJECT_ID} ${WORDPRESS_API_URL} ${MCP_GITHUB_REPOS} ${OTEL_EXPORTER_OTLP_ENDPOINT} ${FIREBASE_WEB_API_KEY} ${DOMAIN}' \
+          envsubst '${IMAGE_URL} ${GCP_PROJECT_NUMBER} ${GCP_PROJECT_ID} ${GCP_REGION} ${FIREBASE_PROJECT_ID} ${WORDPRESS_API_URL} ${MCP_GITHUB_REPOS} ${OTEL_EXPORTER_OTLP_ENDPOINT} ${FIREBASE_WEB_API_KEY}' \
             < service.yaml > service.rendered.yaml
           echo "----- Rendered manifest -----"
           cat service.rendered.yaml
@@ -101,7 +100,7 @@ jobs:
             --project "${{ env.PROJECT_ID }}" \
             --region "${{ env.REGION }}"
 
-      - name: Enforce no-auth (LB-only entry)
+      - name: Allow public invocation (application enforces OAuth)
         run: |
           gcloud run services add-iam-policy-binding aos-fatos-server \
             --member=allUsers --role=roles/run.invoker \

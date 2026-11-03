@@ -10,6 +10,26 @@ Este documento descreve a arquitetura de implantação do servidor Jor-MCP no Go
 
 ---
 
+## Implantação Aos Fatos
+
+Este fork usa um backend público no Cloud Run em
+`https://aos-fatos-server-607018375547.us-central1.run.app` e um app separado
+no Dokku, `aos-fatos-mcp-oauth`, servindo o portal estático em
+`https://mcp-oauth.aosfatos.org`. As instruções de Load Balancer e portal no GCS
+abaixo descrevem a arquitetura upstream, não esta implantação.
+
+O `service.yaml` define a URL do backend em `OAUTH_SERVER_BASE_URL` e a origem
+do portal em `OAUTH_PORTAL_BASE_URL` e `CORS_ALLOWED_ORIGINS`. O ingress é
+`all`, com invocação pública habilitada pelo workflow CD; o OAuth da aplicação
+continua controlando o acesso. As URLs estão explícitas no manifesto, portanto
+o workflow não exige mais a variável de repositório `DOMAIN`.
+
+Execute o workflow CD do backend para aplicar essas configurações. Autorize
+`mcp-oauth.aosfatos.org` no Firebase Authentication separadamente. A imagem do
+portal precisa ser construída com `NEXT_PUBLIC_OAUTH_BACKEND_URL` apontando
+para a origem do backend; variáveis de runtime no Dokku não alteram o
+JavaScript exportado.
+
 ## 1. Visão Geral da Arquitetura GCP
 
 O sistema foi projetado para ser totalmente serverless, altamente disponível e stateless na camada de aplicação.

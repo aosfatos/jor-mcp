@@ -10,6 +10,25 @@ This document outlines the deployment architecture for the Jor-MCP server on Goo
 
 ---
 
+## Aos Fatos deployment
+
+This fork uses a public Cloud Run backend at
+`https://aos-fatos-server-607018375547.us-central1.run.app` and a separate
+Dokku app, `aos-fatos-mcp-oauth`, serving the static portal at
+`https://mcp-oauth.aosfatos.org`. The load balancer and GCS portal instructions
+below describe the upstream architecture, not this deployment.
+
+`service.yaml` sets the backend URL as `OAUTH_SERVER_BASE_URL` and the portal
+origin as both `OAUTH_PORTAL_BASE_URL` and `CORS_ALLOWED_ORIGINS`. Ingress is
+`all`, with public invocation enabled by the CD workflow; application-level
+OAuth still controls access. These URLs are explicit in the manifest, so the
+workflow no longer requires the `DOMAIN` repository variable.
+
+Redeploy the backend through the CD workflow to apply these settings. Authorize
+`mcp-oauth.aosfatos.org` in Firebase Authentication separately. The portal image
+must be built with `NEXT_PUBLIC_OAUTH_BACKEND_URL` set to the backend origin;
+runtime variables in Dokku do not change the exported JavaScript.
+
 ## 1. GCP Architecture Overview
 
 The system is designed to be fully serverless, highly available, and stateless at the application layer.
