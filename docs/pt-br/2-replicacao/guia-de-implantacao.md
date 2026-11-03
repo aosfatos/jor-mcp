@@ -24,6 +24,15 @@ do portal em `OAUTH_PORTAL_BASE_URL` e `CORS_ALLOWED_ORIGINS`. O ingress é
 continua controlando o acesso. As URLs estão explícitas no manifesto, portanto
 o workflow não exige mais a variável de repositório `DOMAIN`.
 
+Cloud Run e Artifact Registry continuam em `aos-fatos`. O manifesto define
+`GOOGLE_CLOUD_PROJECT=jor-mcp-59831` para os SDKs usarem os recursos Firebase e
+Firestore desse projeto. Defina também a variável de repositório
+`FIREBASE_PROJECT_ID` como `jor-mcp-59831`. O banco Firestore deve ser
+`(default)`, salvo configuração explícita de `FIRESTORE_DATABASE_ID`. Conceda
+à identidade de runtime `jor-mcp-runner@aos-fatos.iam.gserviceaccount.com` o
+papel `roles/datastore.user` em `jor-mcp-59831`; não altere o projeto de deploy
+no workflow.
+
 Execute o workflow CD do backend para aplicar essas configurações. Autorize
 `mcp-oauth.aosfatos.org` no Firebase Authentication separadamente. A imagem do
 portal precisa ser construída com `NEXT_PUBLIC_OAUTH_BACKEND_URL` apontando

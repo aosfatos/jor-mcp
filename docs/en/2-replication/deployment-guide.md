@@ -24,6 +24,14 @@ origin as both `OAUTH_PORTAL_BASE_URL` and `CORS_ALLOWED_ORIGINS`. Ingress is
 OAuth still controls access. These URLs are explicit in the manifest, so the
 workflow no longer requires the `DOMAIN` repository variable.
 
+Cloud Run and Artifact Registry remain in `aos-fatos`. The runtime manifest sets
+`GOOGLE_CLOUD_PROJECT=jor-mcp-59831` so the SDKs use that project's Firebase and
+Firestore resources. Set the `FIREBASE_PROJECT_ID` repository variable to
+`jor-mcp-59831` as well. The Firestore database must be `(default)` unless
+`FIRESTORE_DATABASE_ID` is explicitly configured. Grant the runtime identity
+`jor-mcp-runner@aos-fatos.iam.gserviceaccount.com` the `roles/datastore.user` role
+in `jor-mcp-59831`; do not change the deployment workflow's project.
+
 Redeploy the backend through the CD workflow to apply these settings. Authorize
 `mcp-oauth.aosfatos.org` in Firebase Authentication separately. The portal image
 must be built with `NEXT_PUBLIC_OAUTH_BACKEND_URL` set to the backend origin;

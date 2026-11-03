@@ -42,6 +42,8 @@ spec:
             # ── Plain-text variables ─────────────────────────────────────────────
             - name: LOG_LEVEL
               value: "INFO"
+            - name: GOOGLE_CLOUD_PROJECT
+              value: "jor-mcp-59831"
             - name: FIREBASE_PROJECT_ID
               value: "${FIREBASE_PROJECT_ID}"
             - name: WORDPRESS_API_URL
